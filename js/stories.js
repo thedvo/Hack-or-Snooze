@@ -56,18 +56,25 @@ async function addNewStoryOnPage(evt) {
     console.debug("addNewStoryOnPage");
     evt.preventDefault();
 
+    // Extract values from the inputs of the Submit form
     const author = $('#submit-author').val();
     const title = $('#submit-title').val();
     const url = $('#submit-url').val();
 
-    let newData = {title, author, url};
+    // Place data in object to run addStory() 
+    const submitData = {title, author, url}; 
 
-    storyList = await StoryList.addStory(newData);
-    const newStory = generateStoryMarkup(storyList);
+    // Runs addStory(), then with its return value, run generateStoryMarkup()
+    const storyData = await storyList.addStory(currentUser, submitData);
+    const newStory = generateStoryMarkup(storyData);
 
-    $allStoriesList.empty();
+    // Prepends new story to story list with return value from generateStoryMarkup()
     $allStoriesList.prepend(newStory);
     $allStoriesList.show();
+
+    // Resets the form and hides it from page after submit. 
+    $submitForm.trigger('reset');
+    $submitForm.hide();
 }
 // When user clicks Submit in New Story Form. 
 $submitForm.on("submit", addNewStoryOnPage);
