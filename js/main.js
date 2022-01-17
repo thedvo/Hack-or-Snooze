@@ -17,6 +17,11 @@ const $navLogOut = $("#nav-logout"); // anchor tag on navbar which is hidden but
 
 const $navSubmit = $('#nav-submit');
 const $submitForm = $('#submit-form');
+
+const $navFavorite = $('#nav-favorite');
+const $favStoriesList = $('#fav-stories-list');
+
+
 /** To make it easier for individual components to show just themselves, this
  * is a useful function that hides pretty much everything on the page. After
  * calling this, individual components can re-show just what they want.
@@ -28,6 +33,7 @@ function hidePageComponents() {
     $loginForm,
     $signupForm,
     $submitForm,
+    $favStoriesList
   ];
   components.forEach(c => c.hide());
 }
