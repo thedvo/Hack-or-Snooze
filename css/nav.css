@@ -33,8 +33,7 @@ nav {
 
 #nav-favorite {
 	font-size: 0.85rem;
-	margin-left: 4px;
+	margin-left: 2px;
 	border-right: 1.5px solid black;
-	padding-left: 2px;
 	padding-right: 5px;
 }

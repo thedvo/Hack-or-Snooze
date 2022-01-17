@@ -92,6 +92,17 @@ class StoryList {
     return story;
     // Returns the new story instance
   }
+
+  // Delete Stories from API & Remove from story lists
+  async removeStory(user, storyId) {
+    const token = user.loginToken;
+    await axios.delete(`${BASE_URL}/stories/${storyId}`, 
+    {data: {token : user.loginToken}});
+
+  this.stories = this.stories.filter(story => storyId !== storyId);
+  user.ownStories = user.ownStories.filter(s => s.storyId !== storyId);
+  user.favorites = user.favorites.filter(s => s.storyId !== storyId);
+  }
 }
 
 /******************************************************************************
@@ -225,8 +236,8 @@ class User {
   }
 
   // POST/DELETE Request to API from adding or removing favorite. 
-  async addOrRemoveFav(newState, story){
-    const method = newState === "add" ? "POST" : "DELETE";
+  async addOrRemoveFav(action, story){
+    const method = action === "add" ? "POST" : "DELETE";
     const token = this.loginToken; // Need token to add or remove favorite
 
     await axios({

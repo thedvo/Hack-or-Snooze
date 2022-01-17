@@ -19,7 +19,7 @@ async function getAndShowStoriesOnStart() {
  * Returns the markup for the story.
  */
 
-function generateStoryMarkup(story) {
+function generateStoryMarkup(story, showDeleteBtn = false) {
   console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
@@ -29,6 +29,7 @@ function generateStoryMarkup(story) {
 
   return $(`
       <li id="${story.storyId}">
+        ${showDeleteBtn ? addDeleteHTML() : ""}
         ${showStar ? addStarHTML(story, currentUser) : ""}
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
@@ -58,8 +59,38 @@ function addStarHTML(story, user){
 }
 
 /** Gets list of stories from server, generates their HTML, and puts on page. */
+function putStoriesOnPage() {
+  console.debug("putStoriesOnPage");
 
-// When new story is submitted, add to page
+  $allStoriesList.empty();
+
+  // loop through all of our stories and generate HTML for them
+  for (let story of storyList.stories) {
+    const $story = generateStoryMarkup(story);
+    $allStoriesList.append($story);
+  }
+
+  $allStoriesList.show();
+}
+
+
+// Delete Story on Page
+async function deleteStory(evt){
+  console.debug("deleteStory");
+
+  const $closestLi = $(evt.target).closest("li");
+  const storyId = $closestLi.attr("id");
+
+  await storyList.removeStory(currentUser, storyId);
+
+  // Refreshes story list
+  putUserStoriesOnPage();
+
+}
+$ownStories.on("click", ".trash-can", deleteStory);
+
+
+// Add New Story to Page
 async function addNewStoryOnPage(evt) {
     console.debug("addNewStoryOnPage");
     evt.preventDefault();
@@ -68,9 +99,10 @@ async function addNewStoryOnPage(evt) {
     const author = $('#submit-author').val();
     const title = $('#submit-title').val();
     const url = $('#submit-url').val();
+    const username = currentUser.username;
 
     // Place data in object to run addStory() 
-    const submitData = {title, author, url}; 
+    const submitData = {title, author, url, username}; 
 
     // Runs addStory(), then with its return value, run generateStoryMarkup()
     const storyData = await storyList.addStory(currentUser, submitData);
@@ -87,20 +119,24 @@ async function addNewStoryOnPage(evt) {
 // When user clicks Submit in New Story Form. 
 $submitForm.on("submit", addNewStoryOnPage);
 
+function putUserStoriesOnPage() {
+  console.debug("putUserStoriesOnPage");
 
-function putStoriesOnPage() {
-  console.debug("putStoriesOnPage");
+  $ownStories.empty();
 
-  $allStoriesList.empty();
-
-  // loop through all of our stories and generate HTML for them
-  for (let story of storyList.stories) {
-    const $story = generateStoryMarkup(story);
-    $allStoriesList.append($story);
+  if (currentUser.ownStories.length === 0) {
+    $ownStories.append("<h5>No stories added by user yet!</h5>");
+  } 
+  else {
+    // loop through all of users stories and generate HTML for them
+    for (let story of currentUser.ownStories) {
+      let $story = generateStoryMarkup(story, true);
+      $ownStories.append($story);
+    }
   }
-
-  $allStoriesList.show();
+  $ownStories.show();
 }
+
 
 function putFavoriteStoriesOnPage(){
   console.debug("putFavoriteStoriesOnPage");
@@ -108,7 +144,7 @@ function putFavoriteStoriesOnPage(){
   $favStoriesList.empty();
 
   if(currentUser.favorites.length === 0){
-    $favStoriesList.append("<h4>No favorites added!</h4>");
+    $favStoriesList.append("<h5>No favorites added!</h5>");
   }
   else{
     for(let story of currentUser.favorites){
@@ -137,7 +173,6 @@ async function toggleFavorites(evt){
   }
 }
 $allStoriesList.on("click", ".star", toggleFavorites);
-
 
 
 
