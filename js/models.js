@@ -7,11 +7,9 @@ const BASE_URL = "https://hack-or-snooze-v3.herokuapp.com";
  */
 
 class Story {
-
   /** Make instance of Story from data object about story:
    *   - {title, author, url, username, storyId, createdAt}
    */
-
   constructor({ storyId, title, author, url, username, createdAt }) {
     this.storyId = storyId;
     this.title = title;
@@ -22,13 +20,10 @@ class Story {
   }
 
   /** Parses hostname out of URL and returns it. */
-
   getHostName() {
-    // UNIMPLEMENTED: complete this function!
     return new URL(this.url).host;
   }
 }
-
 
 /******************************************************************************
  * List of Story instances: used by UI to show story lists in DOM.
@@ -73,7 +68,6 @@ class StoryList {
    * Returns the new Story instance
    */
 
-  // UNIMPLEMENTED: complete this function!
   async addStory(user, {title, author, url}) {
     // extract login token for the current user and set it to a variable
     // loginToken = token. Refers to User Class below.
@@ -96,10 +90,11 @@ class StoryList {
   // Delete Stories from API & Remove from story lists
   async removeStory(user, storyId) {
     const token = user.loginToken;
-    await axios.delete(`${BASE_URL}/stories/${storyId}`, 
-    {data: {token : user.loginToken}});
 
-  this.stories = this.stories.filter(story => storyId !== storyId);
+    await axios.delete(`${BASE_URL}/stories/${storyId}`, 
+    {data: { token }});
+
+  this.stories = this.stories.filter(s => s.storyId !== storyId);
   user.ownStories = user.ownStories.filter(s => s.storyId !== storyId);
   user.favorites = user.favorites.filter(s => s.storyId !== storyId);
   }
@@ -219,7 +214,6 @@ class User {
       return null;
     }
   }
-
 
   // ADD OR REMOVE FAVORITE STORIES 
   

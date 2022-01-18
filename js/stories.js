@@ -25,7 +25,7 @@ function generateStoryMarkup(story, showDeleteBtn = false) {
   const hostName = story.getHostName();
 
   // If the user is logged in, show the star.
-  const showStar = Boolean(currentUser);
+  const showStar = Boolean(currentUser); // constructor used to create boolean objects
 
   return $(`
       <li id="${story.storyId}">
@@ -124,7 +124,7 @@ function putUserStoriesOnPage() {
   $ownStories.empty();
 
   if (currentUser.ownStories.length === 0) {
-    $ownStories.append("<h5>No stories added by user yet!</h5>");
+    $ownStories.append("<p>No stories added by user yet!</p>");
   } 
   else {
     // loop through all of users stories and generate HTML for them
@@ -143,7 +143,7 @@ function putFavoriteStoriesOnPage(){
   $favStoriesList.empty();
 
   if(currentUser.favorites.length === 0){
-    $favStoriesList.append("<h5>No favorites added!</h5>");
+    $favStoriesList.append("<p>No favorites added!</p>");
   }
   else{
     for(let story of currentUser.favorites){
@@ -171,7 +171,7 @@ async function toggleFavorites(evt){
     $target.closest("i").toggleClass("fas far");
   }
 }
-$allStoriesList.on("click", ".star", toggleFavorites);
+$body.on("click", ".star", toggleFavorites);
 
 
 
